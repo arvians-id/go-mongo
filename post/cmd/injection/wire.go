@@ -5,10 +5,10 @@ package injection
 
 import (
 	"fmt"
-	"github.com/arvians-id/go-mongo/User/cmd/config"
-	"github.com/arvians-id/go-mongo/user/internal/repository"
-	"github.com/arvians-id/go-mongo/user/internal/service"
-	"github.com/arvians-id/go-mongo/user/pb"
+	"github.com/arvians-id/go-mongo/post/cmd/config"
+	"github.com/arvians-id/go-mongo/post/internal/repository"
+	"github.com/arvians-id/go-mongo/post/internal/service"
+	"github.com/arvians-id/go-mongo/post/pb"
 	"github.com/google/wire"
 	"log"
 	"net"
@@ -18,15 +18,15 @@ import (
 )
 
 // Server
-var UserSet = wire.NewSet(
-	repository.NewUserRepository,
-	service.NewUserService,
+var PostSet = wire.NewSet(
+	repository.NewPostRepository,
+	service.NewPostService,
 )
 
-func InitServerAPI(configuration config.Config) (pb.UserServiceServer, error) {
+func InitServerAPI(configuration config.Config) (pb.PostServiceServer, error) {
 	wire.Build(
 		config.NewInitializedDatabase,
-		UserSet,
+		PostSet,
 	)
 
 	return nil, nil
@@ -34,7 +34,7 @@ func InitServerAPI(configuration config.Config) (pb.UserServiceServer, error) {
 
 // Service
 func ProvidePort(configuration config.Config) (net.Listener, error) {
-	port := ":" + strings.Split(configuration.Get("UserServiceURL"), ":")[1]
+	port := ":" + strings.Split(configuration.Get("PostServiceURL"), ":")[1]
 	connection, err := net.Listen("tcp", port)
 	if err != nil {
 		log.Fatalln("Failed at listening", err)

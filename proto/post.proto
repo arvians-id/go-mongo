@@ -4,13 +4,47 @@ package proto;
 
 option go_package = "./pb";
 
+import "google/protobuf/Empty.proto";
+import "google/protobuf/Timestamp.proto";
+
 import "proto/user.proto";
 
 message Post {
-  string ID = 1;
-  string Title = 2;
-  string Content = 3;
-  User User = 4;
-  string CreatedAt = 5;
-  string UpdatedAt = 6;
+  string ID = 1; // @gotags: bson:"_id",json:"_id"
+  string Title = 2; // @gotags: bson:"title",json:"title"
+  string Content = 3; // @gotags: bson:"content",json:"content"
+  User User = 4; // @gotags: bson:"user",json:"user"
+  google.protobuf.Timestamp CreatedAt = 5; // @gotags: bson:"created_at",json:"created_at"
+  google.protobuf.Timestamp UpdatedAt = 6; // @gotags: bson:"updated_at",json:"updated_at"
+}
+
+service PostService {
+  rpc FindAll(google.protobuf.Empty) returns (ListPostResponse) {}
+  rpc FindByID(GetPostByIDRequest) returns (GetPostResponse) {}
+  rpc Create(CreatePostRequest) returns (GetPostResponse) {}
+  rpc Update(UpdatePostRequest) returns (GetPostResponse) {}
+  rpc Delete(GetPostByIDRequest) returns (google.protobuf.Empty) {}
+}
+
+message ListPostResponse {
+  repeated Post Posts = 1; // @gotags: json:"posts"
+}
+
+message GetPostResponse {
+  Post Post = 1; // @gotags: json:"post"
+}
+
+message GetPostByIDRequest {
+  string ID = 1; // @gotags: json:"_id"
+}
+
+message CreatePostRequest {
+  string Title = 1; // @gotags: json:"title"
+  string Content = 2; // @gotags: json:"content"
+}
+
+message UpdatePostRequest {
+  string ID = 1; // @gotags: json:"_id"
+  string Title = 2; // @gotags: json:"title"
+  string Content = 3; // @gotags: json:"content"
 }

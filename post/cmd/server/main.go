@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/arvians-id/go-mongo/user/cmd/injection"
-	"github.com/arvians-id/go-mongo/user/pb"
+	"github.com/arvians-id/go-mongo/post/cmd/injection"
+	"github.com/arvians-id/go-mongo/post/pb"
 	"google.golang.org/grpc"
 	"log"
 )
@@ -28,7 +28,7 @@ func main() {
 	}
 
 	grpcServer := grpc.NewServer()
-	pb.RegisterUserServiceServer(grpcServer, server)
+	pb.RegisterPostServiceServer(grpcServer, server)
 
 	err = grpcServer.Serve(listener)
 	if err != nil {

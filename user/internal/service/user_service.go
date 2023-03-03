@@ -4,7 +4,7 @@ import (
 	"context"
 	"github.com/arvians-id/go-mongo/user/internal/repository"
 	"github.com/arvians-id/go-mongo/user/pb"
-	"github.com/arvians-id/go-mongo/user/util"
+	"github.com/arvians-id/go-mongo/util"
 	"google.golang.org/protobuf/types/known/emptypb"
 )
 
@@ -18,18 +18,18 @@ func NewUserService(userRepository repository.UserRepository) pb.UserServiceServ
 	}
 }
 
-func (service *UserService) FindAll(ctx context.Context, empty *emptypb.Empty) (*pb.ListResponse, error) {
+func (service *UserService) FindAll(ctx context.Context, empty *emptypb.Empty) (*pb.ListUserResponse, error) {
 	users, err := service.UserRepository.FindAll(ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	return &pb.ListResponse{
+	return &pb.ListUserResponse{
 		Users: users,
 	}, nil
 }
 
-func (service *UserService) FindByID(ctx context.Context, id *pb.GetByIDRequest) (*pb.GetResponse, error) {
+func (service *UserService) FindByID(ctx context.Context, id *pb.GetUserByIDRequest) (*pb.GetUserResponse, error) {
 	objectID, err := util.ConvertStringToHex(id.ID)
 	if err != nil {
 		return nil, err
@@ -40,12 +40,12 @@ func (service *UserService) FindByID(ctx context.Context, id *pb.GetByIDRequest)
 		return nil, err
 	}
 
-	return &pb.GetResponse{
+	return &pb.GetUserResponse{
 		User: user,
 	}, nil
 }
 
-func (service *UserService) Create(ctx context.Context, request *pb.CreateRequest) (*pb.GetResponse, error) {
+func (service *UserService) Create(ctx context.Context, request *pb.CreateUserRequest) (*pb.GetUserResponse, error) {
 	passwordHashed, err := util.HashPassword(request.Password)
 	if err != nil {
 		return nil, err
@@ -64,23 +64,23 @@ func (service *UserService) Create(ctx context.Context, request *pb.CreateReques
 		return nil, err
 	}
 
-	return &pb.GetResponse{
+	return &pb.GetUserResponse{
 		User: userCreated,
 	}, nil
 }
 
-func (service *UserService) Update(ctx context.Context, request *pb.UpdateRequest) (*pb.GetResponse, error) {
+func (service *UserService) Update(ctx context.Context, request *pb.UpdateUserRequest) (*pb.GetUserResponse, error) {
 	objectID, err := util.ConvertStringToHex(request.ID)
 	if err != nil {
 		return nil, err
 	}
 
-	checkUser, err := service.UserRepository.FindByID(ctx, objectID)
+	user, err := service.UserRepository.FindByID(ctx, objectID)
 	if err != nil {
 		return nil, err
 	}
 
-	newPassword := checkUser.Password
+	newPassword := user.Password
 	if request.Password != "" {
 		passwordHashed, err := util.HashPassword(request.Password)
 		if err != nil {
@@ -89,22 +89,22 @@ func (service *UserService) Update(ctx context.Context, request *pb.UpdateReques
 		newPassword = passwordHashed
 	}
 
-	checkUser.ID = request.ID
-	checkUser.Name = request.Name
-	checkUser.Password = newPassword
-	checkUser.UpdatedAt = util.PrimitiveDateToTimestampPB()
+	user.ID = request.ID
+	user.Name = request.Name
+	user.Password = newPassword
+	user.UpdatedAt = util.PrimitiveDateToTimestampPB()
 
-	user, err := service.UserRepository.Update(ctx, checkUser)
+	userUpdated, err := service.UserRepository.Update(ctx, user)
 	if err != nil {
 		return nil, err
 	}
 
-	return &pb.GetResponse{
-		User: user,
+	return &pb.GetUserResponse{
+		User: userUpdated,
 	}, nil
 }
 
-func (service *UserService) Delete(ctx context.Context, id *pb.GetByIDRequest) (*emptypb.Empty, error) {
+func (service *UserService) Delete(ctx context.Context, id *pb.GetUserByIDRequest) (*emptypb.Empty, error) {
 	objectID, err := util.ConvertStringToHex(id.ID)
 	if err != nil {
 		return nil, err

@@ -8,10 +8,10 @@ package injection
 
 import (
 	"fmt"
-	"github.com/arvians-id/go-mongo/User/cmd/config"
-	"github.com/arvians-id/go-mongo/user/internal/repository"
-	"github.com/arvians-id/go-mongo/user/internal/service"
-	"github.com/arvians-id/go-mongo/user/pb"
+	"github.com/arvians-id/go-mongo/post/cmd/config"
+	"github.com/arvians-id/go-mongo/post/internal/repository"
+	"github.com/arvians-id/go-mongo/post/internal/service"
+	"github.com/arvians-id/go-mongo/post/pb"
 	"github.com/google/wire"
 	"log"
 	"net"
@@ -22,14 +22,14 @@ import (
 
 // Injectors from wire.go:
 
-func InitServerAPI(configuration config.Config) (pb.UserServiceServer, error) {
+func InitServerAPI(configuration config.Config) (pb.PostServiceServer, error) {
 	database, err := config.NewInitializedDatabase(configuration)
 	if err != nil {
 		return nil, err
 	}
-	userRepository := repository.NewUserRepository(database)
-	userServiceServer := service.NewUserService(userRepository)
-	return userServiceServer, nil
+	postRepository := repository.NewPostRepository(database)
+	postServiceServer := service.NewPostService(postRepository)
+	return postServiceServer, nil
 }
 
 func InitService() (net.Listener, error) {
@@ -63,7 +63,7 @@ func InitConfig() (config.Config, error) {
 // wire.go:
 
 // Server
-var UserSet = wire.NewSet(repository.NewUserRepository, service.NewUserService)
+var PostSet = wire.NewSet(repository.NewPostRepository, service.NewPostService)
 
 // Service
 func ProvidePort(configuration config.Config) (net.Listener, error) {
