@@ -1,0 +1,39 @@
+version: "3"
+services:
+  db:
+    container_name: go-mongo-db
+    image: mongo
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${DB_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${DB_PASSWORD}
+      MONGO_INITDB_DATABASE: ${DB_DATABASE}
+    env_file:
+      - .env
+    ports:
+      - "${DB_PORT}:${DB_PORT}"
+    volumes:
+      - ./database/mongo/mongo-data:/data/db
+    networks:
+      - go-mongo
+    restart: always
+  user:
+    container_name: go-user-service
+    image: arvians/go-mongo
+    ports:
+      - "${APP_PORT}:${APP_PORT}"
+    environment:
+        DB_HOST: db
+        DB_USERNAME: ${DB_USERNAME}
+        DB_PASSWORD: ${DB_PASSWORD}
+        DB_DATABASE: ${DB_DATABASE}
+        DB_PORT: ${DB_PORT}
+        APP_PORT: ${APP_PORT}
+    depends_on:
+      - db
+    networks:
+      - go-mongo
+    restart: always
+
+networks:
+  go-mongo:
+    driver: bridge

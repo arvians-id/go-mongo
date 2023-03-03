@@ -1,0 +1,49 @@
+syntax = "proto3";
+
+package proto;
+
+option go_package = "./pb";
+
+import "google/protobuf/Empty.proto";
+import "google/protobuf/Timestamp.proto";
+
+service UserService {
+  rpc FindAll (google.protobuf.Empty) returns (ListResponse) {}
+  rpc FindByID (GetByIDRequest) returns (GetResponse) {}
+  rpc Create (CreateRequest) returns (GetResponse) {}
+  rpc Update (UpdateRequest) returns (GetResponse) {}
+  rpc Delete (GetByIDRequest) returns (google.protobuf.Empty) {}
+}
+
+message User {
+  string ID = 1; // @gotags: bson:"_id,omitempty",json:"_id"
+  string Name = 2; // @gotags: bson:"name",json:"name"
+  string Email = 3; // @gotags: bson:"email",json:"email"
+  string Password = 4; // @gotags: bson:"password",json:"password"
+  google.protobuf.Timestamp CreatedAt = 5; // @gotags: bson:"created_at,omitempty",json:"created_at"
+  google.protobuf.Timestamp UpdatedAt = 6; // @gotags: bson:"created_at,omitempty",json:"updated_at"
+}
+
+message ListResponse {
+  repeated User Users = 1; // @gotags: json:"users"
+}
+
+message GetByIDRequest {
+  string ID = 1; // @gotags: json:"id"
+}
+
+message CreateRequest {
+  string Name = 1; // @gotags: json:"name",binding:"required,min=3,max=255"
+  string Email = 2; // @gotags: json:"email",binding:"required,email,max=255"
+  string Password = 3; // @gotags: json:"password",binding:"required,min=8,max=255"
+}
+
+message GetResponse {
+  User User = 1; // @gotags: json:"user"
+}
+
+message UpdateRequest {
+  string ID = 1; // @gotags: json:"_id"
+  string Name = 2; // @gotags: json:"name",binding:"required,min=3,max=255"
+  string Password = 3; // @gotags: json:"password",binding:"omitempty,min=8,max=255"
+}
