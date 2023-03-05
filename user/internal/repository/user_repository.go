@@ -2,7 +2,7 @@ package repository
 
 import (
 	"context"
-	"github.com/arvians-id/go-mongo/user/pb"
+	"github.com/arvians-id/go-mongo/user/internal/model"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -10,10 +10,10 @@ import (
 )
 
 type UserRepositoryContract interface {
-	FindAll(ctx context.Context) ([]*pb.User, error)
-	FindByID(ctx context.Context, id primitive.ObjectID) (*pb.User, error)
-	Create(ctx context.Context, user *pb.User) (*pb.User, error)
-	Update(ctx context.Context, user *pb.User) (*pb.User, error)
+	FindAll(ctx context.Context) ([]*model.User, error)
+	FindByID(ctx context.Context, id primitive.ObjectID) (*model.User, error)
+	Create(ctx context.Context, user *model.User) (*model.User, error)
+	Update(ctx context.Context, user *model.User) (*model.User, error)
 	Delete(ctx context.Context, id primitive.ObjectID) error
 }
 
@@ -27,7 +27,7 @@ func NewUserRepository(db *mongo.Database) UserRepository {
 	}
 }
 
-func (repository *UserRepository) FindAll(ctx context.Context) ([]*pb.User, error) {
+func (repository *UserRepository) FindAll(ctx context.Context) ([]*model.User, error) {
 	rows, err := repository.DB.Collection("users").Find(ctx, bson.M{})
 	if err != nil {
 		log.Println("[UserRepository][FindAll] problem querying to db, err: ", err.Error())
@@ -41,9 +41,9 @@ func (repository *UserRepository) FindAll(ctx context.Context) ([]*pb.User, erro
 		}
 	}(rows, ctx)
 
-	var users []*pb.User
+	var users []*model.User
 	for rows.Next(ctx) {
-		var user pb.User
+		var user model.User
 		err := rows.Decode(&user)
 		if err != nil {
 			log.Println("[UserRepository][FindAll] problem with scanning db row, err: ", err.Error())
@@ -55,10 +55,10 @@ func (repository *UserRepository) FindAll(ctx context.Context) ([]*pb.User, erro
 	return users, nil
 }
 
-func (repository *UserRepository) FindByID(ctx context.Context, id primitive.ObjectID) (*pb.User, error) {
+func (repository *UserRepository) FindByID(ctx context.Context, id primitive.ObjectID) (*model.User, error) {
 	row := repository.DB.Collection("users").FindOne(ctx, bson.M{"_id": id})
 
-	var user pb.User
+	var user model.User
 	err := row.Decode(&user)
 	if err != nil {
 		log.Println("[UserRepository][FindByID] problem with scanning db row, err: ", err.Error())
@@ -68,19 +68,19 @@ func (repository *UserRepository) FindByID(ctx context.Context, id primitive.Obj
 	return &user, nil
 }
 
-func (repository *UserRepository) Create(ctx context.Context, user *pb.User) (*pb.User, error) {
+func (repository *UserRepository) Create(ctx context.Context, user *model.User) (*model.User, error) {
 	row, err := repository.DB.Collection("users").InsertOne(ctx, user)
 	if err != nil {
 		log.Println("[UserRepository][Create] problem querying to db, err: ", err.Error())
 		return nil, err
 	}
 
-	user.ID = row.InsertedID.(string)
+	user.ID = row.InsertedID.(primitive.ObjectID)
 
 	return user, nil
 }
 
-func (repository *UserRepository) Update(ctx context.Context, user *pb.User) (*pb.User, error) {
+func (repository *UserRepository) Update(ctx context.Context, user *model.User) (*model.User, error) {
 	_, err := repository.DB.Collection("users").UpdateOne(ctx, bson.M{
 		"_id": user.ID,
 	}, bson.M{"$set": user})

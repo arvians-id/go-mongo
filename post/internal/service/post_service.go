@@ -2,9 +2,10 @@ package service
 
 import (
 	"context"
+	"github.com/arvians-id/go-mongo/post/internal/model"
 	"github.com/arvians-id/go-mongo/post/internal/repository"
 	"github.com/arvians-id/go-mongo/post/pb"
-	util "github.com/arvians-id/go-mongo/util"
+	"github.com/arvians-id/go-mongo/util"
 	"google.golang.org/protobuf/types/known/emptypb"
 )
 
@@ -24,8 +25,13 @@ func (service *PostService) FindAll(ctx context.Context, empty *emptypb.Empty) (
 		return nil, err
 	}
 
+	var postsPb []*pb.Post
+	for _, post := range posts {
+		postsPb = append(postsPb, post.ToPB())
+	}
+
 	return &pb.ListPostResponse{
-		Posts: posts,
+		Posts: postsPb,
 	}, nil
 }
 
@@ -41,17 +47,16 @@ func (service *PostService) FindByID(ctx context.Context, id *pb.GetPostByIDRequ
 	}
 
 	return &pb.GetPostResponse{
-		Post: post,
+		Post: post.ToPB(),
 	}, nil
 }
 
 func (service *PostService) Create(ctx context.Context, request *pb.CreatePostRequest) (*pb.GetPostResponse, error) {
-	var post pb.Post
-	post.ID = util.GenerateID().Hex()
+	var post model.Post
 	post.Title = request.Title
 	post.Content = request.Content
-	post.CreatedAt = util.PrimitiveDateToTimestampPB()
-	post.UpdatedAt = util.PrimitiveDateToTimestampPB()
+	post.CreatedAt = util.PrimitiveDateTime()
+	post.UpdatedAt = util.PrimitiveDateTime()
 
 	postCreated, err := service.PostRepository.Create(ctx, &post)
 	if err != nil {
@@ -59,7 +64,7 @@ func (service *PostService) Create(ctx context.Context, request *pb.CreatePostRe
 	}
 
 	return &pb.GetPostResponse{
-		Post: postCreated,
+		Post: postCreated.ToPB(),
 	}, nil
 }
 
@@ -74,10 +79,9 @@ func (service *PostService) Update(ctx context.Context, request *pb.UpdatePostRe
 		return nil, err
 	}
 
-	post.ID = request.ID
 	post.Title = request.Title
 	post.Content = request.Content
-	post.UpdatedAt = util.PrimitiveDateToTimestampPB()
+	post.UpdatedAt = util.PrimitiveDateTime()
 
 	postUpdated, err := service.PostRepository.Update(ctx, post)
 	if err != nil {
@@ -85,7 +89,7 @@ func (service *PostService) Update(ctx context.Context, request *pb.UpdatePostRe
 	}
 
 	return &pb.GetPostResponse{
-		Post: postUpdated,
+		Post: postUpdated.ToPB(),
 	}, nil
 }
 
@@ -105,5 +109,5 @@ func (service *PostService) Delete(ctx context.Context, id *pb.GetPostByIDReques
 		return nil, err
 	}
 
-	return nil, err
+	return new(emptypb.Empty), nil
 }

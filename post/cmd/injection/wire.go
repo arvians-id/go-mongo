@@ -34,12 +34,12 @@ func InitServerAPI(configuration config.Config) (pb.PostServiceServer, error) {
 
 // Service
 func ProvidePort(configuration config.Config) (net.Listener, error) {
-	port := ":" + strings.Split(configuration.Get("PostServiceURL"), ":")[1]
+	port := ":" + strings.Split(configuration.Get("POST_SERVICE_URL"), ":")[1]
 	connection, err := net.Listen("tcp", port)
 	if err != nil {
 		log.Fatalln("Failed at listening", err)
 	}
-	defer connection.Close()
+	fmt.Println("Post service is running on port", port)
 
 	return connection, nil
 }

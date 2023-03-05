@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"github.com/arvians-id/go-mongo/user/internal/model"
 	"github.com/arvians-id/go-mongo/user/internal/repository"
 	"github.com/arvians-id/go-mongo/user/pb"
 	"github.com/arvians-id/go-mongo/util"
@@ -24,8 +25,13 @@ func (service *UserService) FindAll(ctx context.Context, empty *emptypb.Empty) (
 		return nil, err
 	}
 
+	var usersPB []*pb.User
+	for _, user := range users {
+		usersPB = append(usersPB, user.ToPB())
+	}
+
 	return &pb.ListUserResponse{
-		Users: users,
+		Users: usersPB,
 	}, nil
 }
 
@@ -41,7 +47,7 @@ func (service *UserService) FindByID(ctx context.Context, id *pb.GetUserByIDRequ
 	}
 
 	return &pb.GetUserResponse{
-		User: user,
+		User: user.ToPB(),
 	}, nil
 }
 
@@ -51,13 +57,12 @@ func (service *UserService) Create(ctx context.Context, request *pb.CreateUserRe
 		return nil, err
 	}
 
-	var user pb.User
-	user.ID = util.GenerateID().Hex()
+	var user model.User
 	user.Name = request.Name
 	user.Email = request.Email
 	user.Password = passwordHashed
-	user.CreatedAt = util.PrimitiveDateToTimestampPB()
-	user.UpdatedAt = util.PrimitiveDateToTimestampPB()
+	user.CreatedAt = util.PrimitiveDateTime()
+	user.UpdatedAt = util.PrimitiveDateTime()
 
 	userCreated, err := service.UserRepository.Create(ctx, &user)
 	if err != nil {
@@ -65,7 +70,7 @@ func (service *UserService) Create(ctx context.Context, request *pb.CreateUserRe
 	}
 
 	return &pb.GetUserResponse{
-		User: userCreated,
+		User: userCreated.ToPB(),
 	}, nil
 }
 
@@ -89,10 +94,9 @@ func (service *UserService) Update(ctx context.Context, request *pb.UpdateUserRe
 		newPassword = passwordHashed
 	}
 
-	user.ID = request.ID
 	user.Name = request.Name
 	user.Password = newPassword
-	user.UpdatedAt = util.PrimitiveDateToTimestampPB()
+	user.UpdatedAt = util.PrimitiveDateTime()
 
 	userUpdated, err := service.UserRepository.Update(ctx, user)
 	if err != nil {
@@ -100,7 +104,7 @@ func (service *UserService) Update(ctx context.Context, request *pb.UpdateUserRe
 	}
 
 	return &pb.GetUserResponse{
-		User: userUpdated,
+		User: userUpdated.ToPB(),
 	}, nil
 }
 
@@ -110,15 +114,15 @@ func (service *UserService) Delete(ctx context.Context, id *pb.GetUserByIDReques
 		return nil, err
 	}
 
-	_, err = service.UserRepository.FindByID(ctx, objectID)
+	user, err := service.UserRepository.FindByID(ctx, objectID)
 	if err != nil {
 		return nil, err
 	}
 
-	err = service.UserRepository.Delete(ctx, objectID)
+	err = service.UserRepository.Delete(ctx, user.ID)
 	if err != nil {
 		return nil, err
 	}
 
-	return nil, nil
+	return new(emptypb.Empty), nil
 }

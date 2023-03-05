@@ -2,7 +2,7 @@ package util
 
 import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	"google.golang.org/protobuf/types/known/timestamppb"
+	"time"
 )
 
 func GenerateID() primitive.ObjectID {
@@ -18,9 +18,13 @@ func ConvertStringToHex(id string) (primitive.ObjectID, error) {
 	return objectId, nil
 }
 
-func PrimitiveDateToTimestampPB() *timestamppb.Timestamp {
-	dateTime := primitive.NewDateTimeFromTime(CurrentTime())
-	result := timestamppb.New(dateTime.Time())
+func PrimitiveDateTime() primitive.DateTime {
+	return primitive.NewDateTimeFromTime(CurrentTime())
+}
 
-	return result
+func ConvertPrimitiveDateTimeToString(dateTime time.Time) string {
+	dt := primitive.NewDateTimeFromTime(time.Now())
+	tm := dt.Time()
+	str := tm.Format("2006-01-02 15:04:05")
+	return str
 }

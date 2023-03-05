@@ -5,7 +5,6 @@ package proto;
 option go_package = "./pb";
 
 import "google/protobuf/Empty.proto";
-import "google/protobuf/Timestamp.proto";
 
 service UserService {
   rpc FindAll (google.protobuf.Empty) returns (ListUserResponse) {}
@@ -20,8 +19,8 @@ message User {
   string Name = 2; // @gotags: bson:"name",json:"name"
   string Email = 3; // @gotags: bson:"email",json:"email"
   string Password = 4; // @gotags: bson:"password",json:"password"
-  google.protobuf.Timestamp CreatedAt = 5; // @gotags: bson:"created_at,omitempty",json:"created_at"
-  google.protobuf.Timestamp UpdatedAt = 6; // @gotags: bson:"created_at,omitempty",json:"updated_at"
+  string CreatedAt = 5; // @gotags: bson:"created_at,omitempty",json:"created_at"
+  string UpdatedAt = 6; // @gotags: bson:"updated_at,omitempty",json:"updated_at"
 }
 
 message ListUserResponse {

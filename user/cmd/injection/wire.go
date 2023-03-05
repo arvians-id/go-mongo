@@ -8,7 +8,6 @@ import (
 	"github.com/arvians-id/go-mongo/User/cmd/config"
 	"github.com/arvians-id/go-mongo/user/internal/repository"
 	"github.com/arvians-id/go-mongo/user/internal/service"
-	"github.com/arvians-id/go-mongo/user/pb"
 	"github.com/google/wire"
 	"log"
 	"net"
@@ -23,7 +22,7 @@ var UserSet = wire.NewSet(
 	service.NewUserService,
 )
 
-func InitServerAPI(configuration config.Config) (pb.UserServiceServer, error) {
+func InitServerAPI(configuration config.Config) (model.UserServiceServer, error) {
 	wire.Build(
 		config.NewInitializedDatabase,
 		UserSet,
@@ -34,12 +33,12 @@ func InitServerAPI(configuration config.Config) (pb.UserServiceServer, error) {
 
 // Service
 func ProvidePort(configuration config.Config) (net.Listener, error) {
-	port := ":" + strings.Split(configuration.Get("UserServiceURL"), ":")[1]
+	port := ":" + strings.Split(configuration.Get("USER_SERVICE_URL"), ":")[1]
 	connection, err := net.Listen("tcp", port)
 	if err != nil {
 		log.Fatalln("Failed at listening", err)
 	}
-	defer connection.Close()
+	fmt.Println("User service is running on port", port)
 
 	return connection, nil
 }

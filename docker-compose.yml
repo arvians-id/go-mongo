@@ -16,18 +16,37 @@ services:
     networks:
       - go-mongo
     restart: always
-  user:
-    container_name: go-user-service
-    image: arvians/go-mongo
+  adapter:
+    container_name: go-adapter
+    image: arvians/go-mongo/adapter
     ports:
       - "${APP_PORT}:${APP_PORT}"
-    environment:
-        DB_HOST: db
-        DB_USERNAME: ${DB_USERNAME}
-        DB_PASSWORD: ${DB_PASSWORD}
-        DB_DATABASE: ${DB_DATABASE}
-        DB_PORT: ${DB_PORT}
-        APP_PORT: ${APP_PORT}
+    env_file:
+      - .env
+    depends_on:
+      - db
+    networks:
+      - go-mongo
+    restart: always
+  user:
+    container_name: go-user-service
+    image: arvians/go-mongo/user
+    ports:
+      - "${USER_SERVICE_URL}:${USER_SERVICE_URL}"
+    env_file:
+      - .env
+    depends_on:
+      - db
+    networks:
+      - go-mongo
+    restart: always
+  post:
+    container_name: go-post-service
+    image: arvians/go-mongo/post
+    ports:
+      - "${POST_SERVICE_URL}:${POST_SERVICE_URL}"
+    env_file:
+      - .env
     depends_on:
       - db
     networks:

@@ -5,7 +5,6 @@ package proto;
 option go_package = "./pb";
 
 import "google/protobuf/Empty.proto";
-import "google/protobuf/Timestamp.proto";
 
 import "proto/user.proto";
 
@@ -14,8 +13,8 @@ message Post {
   string Title = 2; // @gotags: bson:"title",json:"title"
   string Content = 3; // @gotags: bson:"content",json:"content"
   User User = 4; // @gotags: bson:"user",json:"user"
-  google.protobuf.Timestamp CreatedAt = 5; // @gotags: bson:"created_at",json:"created_at"
-  google.protobuf.Timestamp UpdatedAt = 6; // @gotags: bson:"updated_at",json:"updated_at"
+  string CreatedAt = 5; // @gotags: bson:"created_at",json:"created_at"
+  string UpdatedAt = 6; // @gotags: bson:"updated_at",json:"updated_at"
 }
 
 service PostService {

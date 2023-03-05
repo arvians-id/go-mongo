@@ -19,7 +19,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("failed to initialize service: %v", err)
 	}
-	listener.Close()
+	defer listener.Close()
 
 	// Init Server
 	server, err := injection.InitServerAPI(configuration)
