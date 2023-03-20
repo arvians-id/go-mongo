@@ -30,13 +30,13 @@ type Post struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	ID        string `protobuf:"bytes,1,opt,name=ID,proto3" json:"_id" bson:"_id"`               // @gotags: bson:"_id",json:"_id"
-	Title     string `protobuf:"bytes,2,opt,name=Title,proto3" json:"title" bson:"title"`         // @gotags: bson:"title",json:"title"
-	Content   string `protobuf:"bytes,3,opt,name=Content,proto3" json:"content" bson:"content"`     // @gotags: bson:"content",json:"content"
-	UserID    string `protobuf:"bytes,4,opt,name=UserID,proto3" json:"user_id" bson:"user_id"`       // @gotags: bson:"user_id",json:"user_id"
-	User      *User  `protobuf:"bytes,5,opt,name=User,proto3" json:"user" bson:"user"`           // @gotags: bson:"user",json:"user"
-	CreatedAt string `protobuf:"bytes,6,opt,name=CreatedAt,proto3" json:"created_at" bson:"created_at"` // @gotags: bson:"created_at",json:"created_at"
-	UpdatedAt string `protobuf:"bytes,7,opt,name=UpdatedAt,proto3" json:"updated_at" bson:"updated_at"` // @gotags: bson:"updated_at",json:"updated_at"
+	ID        string `protobuf:"bytes,1,opt,name=ID,proto3" json:"ID,omitempty"`               // @gotags: bson:"_id",json:"_id"
+	Title     string `protobuf:"bytes,2,opt,name=Title,proto3" json:"Title,omitempty"`         // @gotags: bson:"title",json:"title"
+	Content   string `protobuf:"bytes,3,opt,name=Content,proto3" json:"Content,omitempty"`     // @gotags: bson:"content",json:"content"
+	UserID    string `protobuf:"bytes,4,opt,name=UserID,proto3" json:"UserID,omitempty"`       // @gotags: bson:"user_id",json:"user_id"
+	User      *User  `protobuf:"bytes,5,opt,name=User,proto3" json:"User,omitempty"`           // @gotags: bson:"user",json:"user"
+	CreatedAt string `protobuf:"bytes,6,opt,name=CreatedAt,proto3" json:"CreatedAt,omitempty"` // @gotags: bson:"created_at",json:"created_at"
+	UpdatedAt string `protobuf:"bytes,7,opt,name=UpdatedAt,proto3" json:"UpdatedAt,omitempty"` // @gotags: bson:"updated_at",json:"updated_at"
 }
 
 func (x *Post) Reset() {
@@ -125,7 +125,7 @@ type ListPostResponse struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Posts []*Post `protobuf:"bytes,1,rep,name=Posts,proto3" json:"posts"` // @gotags: json:"posts"
+	Posts []*Post `protobuf:"bytes,1,rep,name=Posts,proto3" json:"Posts,omitempty"` // @gotags: json:"posts"
 }
 
 func (x *ListPostResponse) Reset() {
@@ -172,7 +172,7 @@ type GetPostResponse struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Post *Post `protobuf:"bytes,1,opt,name=Post,proto3" json:"post"` // @gotags: json:"post"
+	Post *Post `protobuf:"bytes,1,opt,name=Post,proto3" json:"Post,omitempty"` // @gotags: json:"post"
 }
 
 func (x *GetPostResponse) Reset() {
@@ -219,7 +219,7 @@ type GetPostByIDRequest struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	ID string `protobuf:"bytes,1,opt,name=ID,proto3" json:"_id"` // @gotags: json:"_id"
+	ID string `protobuf:"bytes,1,opt,name=ID,proto3" json:"ID,omitempty"` // @gotags: json:"_id"
 }
 
 func (x *GetPostByIDRequest) Reset() {
@@ -266,9 +266,9 @@ type CreatePostRequest struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Title   string `protobuf:"bytes,1,opt,name=Title,proto3" json:"title"`     // @gotags: json:"title"
-	Content string `protobuf:"bytes,2,opt,name=Content,proto3" json:"content"` // @gotags: json:"content"
-	UserID  string `protobuf:"bytes,3,opt,name=UserID,proto3" json:"user_id" bson:"user_id"`   // @gotags: bson:"user_id",json:"user_id"
+	Title   string `protobuf:"bytes,1,opt,name=Title,proto3" json:"Title,omitempty"`     // @gotags: json:"title"
+	Content string `protobuf:"bytes,2,opt,name=Content,proto3" json:"Content,omitempty"` // @gotags: json:"content"
+	UserID  string `protobuf:"bytes,3,opt,name=UserID,proto3" json:"UserID,omitempty"`   // @gotags: bson:"user_id",json:"user_id"
 }
 
 func (x *CreatePostRequest) Reset() {
@@ -329,10 +329,10 @@ type UpdatePostRequest struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	ID      string `protobuf:"bytes,1,opt,name=ID,proto3" json:"_id"`           // @gotags: json:"_id"
-	Title   string `protobuf:"bytes,2,opt,name=Title,proto3" json:"title"`     // @gotags: json:"title"
-	Content string `protobuf:"bytes,3,opt,name=Content,proto3" json:"content"` // @gotags: json:"content"
-	UserID  string `protobuf:"bytes,4,opt,name=UserID,proto3" json:"user_id" bson:"user_id"`   // @gotags: bson:"user_id",json:"user_id"
+	ID      string `protobuf:"bytes,1,opt,name=ID,proto3" json:"ID,omitempty"`           // @gotags: json:"_id"
+	Title   string `protobuf:"bytes,2,opt,name=Title,proto3" json:"Title,omitempty"`     // @gotags: json:"title"
+	Content string `protobuf:"bytes,3,opt,name=Content,proto3" json:"Content,omitempty"` // @gotags: json:"content"
+	UserID  string `protobuf:"bytes,4,opt,name=UserID,proto3" json:"UserID,omitempty"`   // @gotags: bson:"user_id",json:"user_id"
 }
 
 func (x *UpdatePostRequest) Reset() {

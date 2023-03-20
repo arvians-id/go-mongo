@@ -32,7 +32,7 @@ services:
     container_name: go-user-service
     image: arvians/go-mongo/user
     ports:
-      - "${USER_SERVICE_URL}:${USER_SERVICE_URL}"
+      - "50001:50001"
     env_file:
       - .env
     depends_on:
@@ -44,7 +44,7 @@ services:
     container_name: go-post-service
     image: arvians/go-mongo/post
     ports:
-      - "${POST_SERVICE_URL}:${POST_SERVICE_URL}"
+      - "50002:50002"
     env_file:
       - .env
     depends_on:

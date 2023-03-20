@@ -1,4 +1,4 @@
-package user
+package post
 
 import (
 	"github.com/arvians-id/go-mongo/adapter/pb"
@@ -12,44 +12,44 @@ import (
 )
 
 type Controller struct {
-	UserService pb.UserServiceClient
+	PostService pb.PostServiceClient
 }
 
-func NewUserController(router *gin.Engine, configuration config.Config) *Controller {
-	connection, err := grpc.Dial(configuration.Get("USER_SERVICE_URL"), grpc.WithInsecure())
+func NewPostController(router *gin.Engine, configuration config.Config) *Controller {
+	connection, err := grpc.Dial(configuration.Get("POST_SERVICE_URL"), grpc.WithInsecure())
 	if err != nil {
 		log.Fatalln(err)
 	}
 
 	controller := &Controller{
-		UserService: pb.NewUserServiceClient(connection),
+		PostService: pb.NewPostServiceClient(connection),
 	}
 
 	routes := router.Group("/api")
 	{
-		routes.GET("/users", controller.FindAll)
-		routes.GET("/users/:id", controller.FindByID)
-		routes.POST("/users", controller.Create)
-		routes.PATCH("/users/:id", controller.Update)
-		routes.DELETE("/users/:id", controller.Delete)
+		routes.GET("/posts", controller.FindAll)
+		routes.GET("/posts/:id", controller.FindByID)
+		routes.POST("/posts", controller.Create)
+		routes.PATCH("/posts/:id", controller.Update)
+		routes.DELETE("/posts/:id", controller.Delete)
 	}
 
 	return controller
 }
 
 func (controller *Controller) FindAll(ctx *gin.Context) {
-	users, err := controller.UserService.FindAll(ctx.Request.Context(), new(emptypb.Empty))
+	posts, err := controller.PostService.FindAll(ctx.Request.Context(), new(emptypb.Empty))
 	if err != nil {
 		response.ReturnErrorInternalServerError(ctx, err, nil)
 		return
 	}
 
-	response.ReturnSuccessOK(ctx, "OK", users)
+	response.ReturnSuccessOK(ctx, "OK", posts)
 }
 
 func (controller *Controller) FindByID(ctx *gin.Context) {
 	id := ctx.Param("id")
-	user, err := controller.UserService.FindByID(ctx, &pb.GetUserByIDRequest{
+	user, err := controller.PostService.FindByID(ctx, &pb.GetPostByIDRequest{
 		ID: id,
 	})
 	if err != nil {
@@ -61,26 +61,24 @@ func (controller *Controller) FindByID(ctx *gin.Context) {
 }
 
 func (controller *Controller) Create(ctx *gin.Context) {
-	var request pb.CreateUserRequest
-	err := ctx.ShouldBindJSON(&request)
-	if err != nil {
+	var request pb.CreatePostRequest
+	if err := ctx.ShouldBindJSON(&request); err != nil {
 		response.ReturnErrorBadRequest(ctx, err, nil)
 		return
 	}
 
-	user, err := controller.UserService.Create(ctx, &request)
+	post, err := controller.PostService.Create(ctx, &request)
 	if err != nil {
 		response.ReturnErrorInternalServerError(ctx, err, nil)
 		return
 	}
 
-	response.ReturnSuccessOK(ctx, "OK", user)
+	response.ReturnSuccessOK(ctx, "OK", post)
 }
 
 func (controller *Controller) Update(ctx *gin.Context) {
-	var request pb.UpdateUserRequest
-	err := ctx.ShouldBindJSON(&request)
-	if err != nil {
+	var request pb.UpdatePostRequest
+	if err := ctx.ShouldBindJSON(&request); err != nil {
 		response.ReturnErrorBadRequest(ctx, err, nil)
 		return
 	}
@@ -92,18 +90,18 @@ func (controller *Controller) Update(ctx *gin.Context) {
 	}
 
 	request.ID = id.Hex()
-	user, err := controller.UserService.Update(ctx, &request)
+	post, err := controller.PostService.Update(ctx, &request)
 	if err != nil {
 		response.ReturnErrorInternalServerError(ctx, err, nil)
 		return
 	}
 
-	response.ReturnSuccessOK(ctx, "OK", user)
+	response.ReturnSuccessOK(ctx, "OK", post)
 }
 
 func (controller *Controller) Delete(ctx *gin.Context) {
 	id := ctx.Param("id")
-	_, err := controller.UserService.Delete(ctx, &pb.GetUserByIDRequest{
+	_, err := controller.PostService.Delete(ctx, &pb.GetPostByIDRequest{
 		ID: id,
 	})
 	if err != nil {

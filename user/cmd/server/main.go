@@ -1,8 +1,8 @@
 package main
 
 import (
+	"github.com/arvians-id/go-mongo/pb"
 	"github.com/arvians-id/go-mongo/user/cmd/injection"
-	"github.com/arvians-id/go-mongo/user/pb"
 	"google.golang.org/grpc"
 	"log"
 )

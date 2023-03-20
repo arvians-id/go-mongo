@@ -5,7 +5,7 @@ package injection
 
 import (
 	"fmt"
-	"github.com/arvians-id/go-mongo/User/cmd/config"
+	"github.com/arvians-id/go-mongo/user/cmd/config"
 	"github.com/arvians-id/go-mongo/user/internal/repository"
 	"github.com/arvians-id/go-mongo/user/internal/service"
 	"github.com/google/wire"

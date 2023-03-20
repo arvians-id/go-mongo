@@ -1,7 +1,7 @@
 package model
 
 import (
-	"github.com/arvians-id/go-mongo/post/pb"
+	"github.com/arvians-id/go-mongo/pb"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 

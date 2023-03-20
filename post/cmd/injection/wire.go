@@ -5,10 +5,10 @@ package injection
 
 import (
 	"fmt"
+	"github.com/arvians-id/go-mongo/pb"
 	"github.com/arvians-id/go-mongo/post/cmd/config"
 	"github.com/arvians-id/go-mongo/post/internal/repository"
 	"github.com/arvians-id/go-mongo/post/internal/service"
-	"github.com/arvians-id/go-mongo/post/pb"
 	"github.com/google/wire"
 	"log"
 	"net"

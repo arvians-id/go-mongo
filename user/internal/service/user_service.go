@@ -2,9 +2,9 @@ package service
 
 import (
 	"context"
+	"github.com/arvians-id/go-mongo/pb"
 	"github.com/arvians-id/go-mongo/user/internal/model"
 	"github.com/arvians-id/go-mongo/user/internal/repository"
-	"github.com/arvians-id/go-mongo/user/pb"
 	"github.com/arvians-id/go-mongo/util"
 	"google.golang.org/protobuf/types/known/emptypb"
 )

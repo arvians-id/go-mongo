@@ -2,9 +2,9 @@ package service
 
 import (
 	"context"
+	"github.com/arvians-id/go-mongo/pb"
 	"github.com/arvians-id/go-mongo/post/internal/model"
 	"github.com/arvians-id/go-mongo/post/internal/repository"
-	"github.com/arvians-id/go-mongo/post/pb"
 	"github.com/arvians-id/go-mongo/util"
 	"google.golang.org/protobuf/types/known/emptypb"
 )
@@ -47,14 +47,20 @@ func (service *PostService) FindByID(ctx context.Context, id *pb.GetPostByIDRequ
 	}
 
 	return &pb.GetPostResponse{
-		Post: post.ToPB(),
+		Post: post.ToPBWithUser(),
 	}, nil
 }
 
 func (service *PostService) Create(ctx context.Context, request *pb.CreatePostRequest) (*pb.GetPostResponse, error) {
+	userId, err := util.ConvertStringToHex(request.UserID)
+	if err != nil {
+		return nil, err
+	}
+
 	var post model.Post
 	post.Title = request.Title
 	post.Content = request.Content
+	post.UserID = userId
 	post.CreatedAt = util.PrimitiveDateTime()
 	post.UpdatedAt = util.PrimitiveDateTime()
 

@@ -3,7 +3,8 @@ package main
 import (
 	"github.com/arvians-id/go-mongo/adapter/cmd/config"
 	"github.com/arvians-id/go-mongo/adapter/middleware"
-	controller "github.com/arvians-id/go-mongo/adapter/pkg/user"
+	"github.com/arvians-id/go-mongo/adapter/pkg/post"
+	"github.com/arvians-id/go-mongo/adapter/pkg/user"
 	"github.com/gin-gonic/gin"
 	"log"
 	"os"
@@ -30,7 +31,8 @@ func main() {
 		})
 	})
 
-	controller.NewUserController(router, configuration)
+	user.NewUserController(router, configuration)
+	post.NewPostController(router, configuration)
 
 	port := ":" + configuration.Get("APP_PORT")
 	err = router.Run(port)

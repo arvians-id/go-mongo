@@ -28,7 +28,7 @@ func NewPostRepository(db *mongo.Database) PostRepository {
 }
 
 func (repository *PostRepository) FindAll(ctx context.Context) ([]*model.Post, error) {
-	rows, err := repository.DB.Collection("posts").Find(ctx, bson.M{})
+	users, err := repository.DB.Collection("posts").Find(ctx, bson.M{})
 	if err != nil {
 		log.Println("[PostRepository][FindAll] problem querying to db, err: ", err.Error())
 		return nil, err
@@ -36,40 +36,60 @@ func (repository *PostRepository) FindAll(ctx context.Context) ([]*model.Post, e
 	defer func(rows *mongo.Cursor, ctx context.Context) {
 		err := rows.Close(ctx)
 		if err != nil {
-			log.Println("[PostRepository][FindAll] problem closing db rows, err: ", err.Error())
+			log.Println("[UserRepository][FindAll] problem closing db rows, err: ", err.Error())
 			return
 		}
-	}(rows, ctx)
+	}(users, ctx)
 
-	var Posts []*model.Post
-	for rows.Next(ctx) {
+	var posts []*model.Post
+	for users.Next(ctx) {
 		var post model.Post
-		err := rows.Decode(&post)
+		err := users.Decode(&post)
 		if err != nil {
 			log.Println("[PostRepository][FindAll] problem with scanning db row, err: ", err.Error())
 			return nil, err
 		}
-		Posts = append(Posts, &post)
+		posts = append(posts, &post)
 	}
 
-	return Posts, nil
+	return posts, nil
 }
 
 func (repository *PostRepository) FindByID(ctx context.Context, id primitive.ObjectID) (*model.Post, error) {
-	row := repository.DB.Collection("posts").FindOne(ctx, bson.M{"_id": id})
+	postsCollection := repository.DB.Collection("posts")
+	usersCollection := repository.DB.Collection("users")
 
 	var post model.Post
-	err := row.Decode(&post)
+	err := postsCollection.FindOne(ctx, bson.M{
+		"_id": id,
+	}).Decode(&post)
 	if err != nil {
-		log.Println("[PostRepository][FindByID] problem with scanning db row, err: ", err.Error())
+		log.Println("[PostRepository][FindByID] problem querying to db, err: ", err.Error())
 		return nil, err
 	}
+
+	var user model.User
+	err = usersCollection.FindOne(ctx, bson.M{
+		"_id": post.UserID,
+	}).Decode(&user)
+	if err != nil {
+		log.Println("[PostRepository][FindByID] problem querying to db, err: ", err.Error())
+		return nil, err
+	}
+
+	post.User = &user
 
 	return &post, nil
 }
 
 func (repository *PostRepository) Create(ctx context.Context, post *model.Post) (*model.Post, error) {
-	row, err := repository.DB.Collection("posts").InsertOne(ctx, post)
+	row, err := repository.DB.Collection("posts").InsertOne(ctx, bson.M{
+		"title":      post.Title,
+		"content":    post.Content,
+		"user_id":    post.UserID,
+		"created_at": post.CreatedAt,
+		"updated_at": post.UpdatedAt,
+	})
 	if err != nil {
 		log.Println("[PostRepository][Create] problem querying to db, err: ", err.Error())
 		return nil, err

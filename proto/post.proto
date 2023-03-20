@@ -12,9 +12,10 @@ message Post {
   string ID = 1; // @gotags: bson:"_id",json:"_id"
   string Title = 2; // @gotags: bson:"title",json:"title"
   string Content = 3; // @gotags: bson:"content",json:"content"
-  User User = 4; // @gotags: bson:"user",json:"user"
-  string CreatedAt = 5; // @gotags: bson:"created_at",json:"created_at"
-  string UpdatedAt = 6; // @gotags: bson:"updated_at",json:"updated_at"
+  string UserID = 4; // @gotags: bson:"user_id",json:"user_id"
+  User User = 5; // @gotags: bson:"user",json:"user"
+  string CreatedAt = 6; // @gotags: bson:"created_at",json:"created_at"
+  string UpdatedAt = 7; // @gotags: bson:"updated_at",json:"updated_at"
 }
 
 service PostService {
@@ -40,10 +41,12 @@ message GetPostByIDRequest {
 message CreatePostRequest {
   string Title = 1; // @gotags: json:"title"
   string Content = 2; // @gotags: json:"content"
+  string UserID = 3; // @gotags: bson:"user_id",json:"user_id"
 }
 
 message UpdatePostRequest {
   string ID = 1; // @gotags: json:"_id"
   string Title = 2; // @gotags: json:"title"
   string Content = 3; // @gotags: json:"content"
+  string UserID = 4; // @gotags: bson:"user_id",json:"user_id"
 }

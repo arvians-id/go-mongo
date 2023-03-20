@@ -1,0 +1,32 @@
+###
+# LIST USER
+# curl -X GET http://localhost:8080/api/users
+GET http://localhost:8080/api/users
+
+###
+# GET USER
+# curl -X GET http://localhost:8080/api/users/640458215cd3cad63098809c
+GET http://localhost:8080/api/users/640ad85598858daf9487dbe0
+
+###
+# CREATE USER
+# curl -X POST -d "{\"name\":\"Agung Bimantara\",\"email\":\"agungb@ummi.ac.id\",\"password\":\"Rahasia123\"}" http://localhost:8080/api/users
+POST http://localhost:8080/api/users
+Content-Type: application/json
+
+{"name":"Agung Bimantara","email":"agungb@ummi.ac.id","password":"Rahasia123"}
+
+###
+# UPDATE USER
+# curl -X PATCH -d "{\"name\":\"Widdy Gantenk\",\"password\":\"WiddySiGantenk123\"}" http://localhost:8080/api/users/640ad85598858daf9487dbe0
+PATCH http://localhost:8080/api/users/640ad85598858daf9487dbe0
+Content-Type: application/json
+
+{"name":"Widdy Gantenk","email":"widgantenk@ummi.ac.id","password":"WiddySiGantenk123"}
+
+###
+# DELETE USER
+# curl -X DELETE http://localhost:8080/api/users/640ad72e98858daf9487dbdf
+DELETE http://localhost:8080/api/users/640ad85598858daf9487dbe0
+
+
